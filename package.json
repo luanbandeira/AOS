@@ -1,0 +1,21 @@
+{
+  "name": "aos",
+  "version": "1.2.0",
+  "description": "Aplicações orientadas a serviço",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luanbandeira/AOS.git"
+  },
+  "keywords": ["faculdade", "Aplicações", "orientada", "serviço"],
+  "author": "Luan",
+  "license": "MIT",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/luanbandeira/AOS/issues"
+  },
+  "homepage": "https://github.com/luanbandeira/AOS#readme"
+}
