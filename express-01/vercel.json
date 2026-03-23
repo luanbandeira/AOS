@@ -1,15 +1,25 @@
 {
-  "version": 2,
-  "builds": [
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
     {
-      "src": "api/index.js",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
+      "source": "/",
+      "destination": "/api"
+    },
     {
-      "src": "/(.*)",
-      "dest": "api/index.js"
+      "source": "/users",
+      "destination": "/api/users"
+    },
+    {
+      "source": "/users/:path*",
+      "destination": "/api/users/:path*"
+    },
+    {
+      "source": "/messages",
+      "destination": "/api/messages"
+    },
+    {
+      "source": "/messages/:path*",
+      "destination": "/api/messages/:path*"
     }
   ]
 }

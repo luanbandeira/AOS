@@ -5,9 +5,9 @@ const userRoutes = require("./user");
 const messageRoutes = require("./message");
 
 router.get("/", (req, res) => {
-  return res.json({
-    message: "API funcionando",
-  });
+  return res.send(
+    `Received a GET HTTP method Servidor rodando! ${process.env.MESSAGE}`
+  );
 });
 
 router.use("/users", userRoutes);

@@ -13,26 +13,35 @@ app.use(express.json());
 
 app.use("/", routes);
 
-const PORT = process.env.PORT || 3000;
+let isDbReady = false;
 
-const start = async () => {
+async function prepareApp() {
+  if (isDbReady) return;
+
+  await db.sequelize.authenticate();
+  console.log("Banco conectado com sucesso.");
+
+  await db.sequelize.sync({
+    force: process.env.ERASE_DATABASE_ON_SYNC === "true",
+  });
+
+  console.log("Tabelas sincronizadas com sucesso.");
+  console.log(`MESSAGE: ${process.env.MESSAGE}`);
+
+  isDbReady = true;
+}
+
+app.use(async (req, res, next) => {
   try {
-    await db.sequelize.authenticate();
-    console.log("Banco conectado com sucesso.");
-
-    await db.sequelize.sync({
-      force: process.env.ERASE_DATABASE_ON_SYNC === "true",
-    });
-
-    console.log("Tabelas sincronizadas com sucesso.");
-
-    app.listen(PORT, () => {
-      console.log(`Servidor rodando na porta ${PORT}`);
-      console.log(`MESSAGE: ${process.env.MESSAGE}`);
-    });
+    await prepareApp();
+    next();
   } catch (error) {
-    console.error("Erro ao iniciar servidor:", error);
+    console.error("Erro ao preparar app:", error);
+    res.status(500).json({
+      error: "Erro ao iniciar aplicação",
+      details: error.message,
+    });
   }
-};
+});
 
-start();
+module.exports = app
