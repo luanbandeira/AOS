@@ -1,25 +1,9 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
-    {
-      "source": "/",
-      "destination": "/api"
-    },
-    {
-      "source": "/users",
-      "destination": "/api/users"
-    },
-    {
-      "source": "/users/:path*",
-      "destination": "/api/users/:path*"
-    },
-    {
-      "source": "/messages",
-      "destination": "/api/messages"
-    },
-    {
-      "source": "/messages/:path*",
-      "destination": "/api/messages/:path*"
-    }
+    { "source": "/", "destination": "/api" },
+    { "source": "/users", "destination": "/api/users" },
+    { "source": "/users/:path*", "destination": "/api/users/:path*" },
+    { "source": "/messages", "destination": "/api/messages" },
+    { "source": "/messages/:path*", "destination": "/api/messages/:path*" }
   ]
 }
