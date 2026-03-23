@@ -1,62 +1,85 @@
-require("dotenv").config();
+import "dotenv/config";
+import cors from "cors";
+import express from "express";
 
-const express = require("express");
-const cors = require("cors");
-
-const routes = require("./routes");
-const db = require("./models");
+import models, { sequelize } from "./models";
+import routes from "./routes";
 
 const app = express();
-
+app.set("trust proxy", true);
 app.use(cors());
 app.use(express.json());
-
-let initialized = false;
-
-async function initApp() {
-  if (initialized) return;
-
-  await db.sequelize.authenticate();
-  console.log("Banco conectado com sucesso.");
-
-  await db.sequelize.sync({
-    force: process.env.ERASE_DATABASE_ON_SYNC === "true",
-  });
-
-  console.log("Tabelas sincronizadas com sucesso.");
-  console.log(`MESSAGE: ${process.env.MESSAGE}`);
-
-  initialized = true;
-}
-
+app.use(express.urlencoded({ extended: true }));
 app.use(async (req, res, next) => {
-  try {
-    await initApp();
-    next();
-  } catch (error) {
-    console.error("Erro ao inicializar aplicação:", error);
-    return res.status(500).json({
-      error: "Erro ao iniciar aplicação",
-      details: error.message,
-    });
-  }
+  req.context = {
+    models,
+    me: await models.User.findByLogin("rwieruch"),
+  };
+  next();
+});
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.path} - ${req.ip}`);
+  next();
 });
 
-app.use("/", routes);
+app.use("/session", routes.session);
+app.use("/users", routes.user);
+app.use("/messages", routes.message);
 
-const PORT = process.env.PORT || 3000;
+app.get("/", (req, res) => {
+  res.send(
+    "Received a GET HTTP method\nServidor rodando!\n" + process.env.MESSAGE,
+  );
+});
 
-// Só abre porta localmente
-if (process.env.VERCEL !== "1") {
-  initApp()
-    .then(() => {
-      app.listen(PORT, () => {
-        console.log(`Servidor rodando na porta ${PORT}`);
-      });
-    })
-    .catch((error) => {
-      console.error("Erro ao subir servidor local:", error);
-    });
-}
+const port = process.env.PORT ?? 3000;
+const eraseDatabaseOnSync = process.env.ERASE_DATABASE_ON_SYNC === "true";
 
-module.exports = app;
+sequelize.sync({ force: eraseDatabaseOnSync }).then(async () => {
+  if (eraseDatabaseOnSync) {
+    createUsersWithMessages();
+  }
+
+  app.listen(port, () =>
+    console.log(
+      "Express-01 app listening on port " + port + "!\n" + process.env.MESSAGE,
+    ),
+  );
+});
+
+const createUsersWithMessages = async () => {
+  await models.User.create(
+    {
+      username: "rwieruch",
+      email: "rwieruch@email.com",
+      messages: [
+        {
+          text: "Published the Road to learn React",
+        },
+      ],
+    },
+    {
+      include: [models.Message],
+    },
+  );
+
+  await models.User.create(
+    {
+      username: "ddavids",
+      email: "ddavids@email.com",
+      messages: [
+        {
+          text: "Happy to release ...",
+        },
+        {
+          text: "Published a complete ...",
+        },
+      ],
+    },
+    {
+      include: [models.Message],
+    },
+  );
+};
+
+export default app;
