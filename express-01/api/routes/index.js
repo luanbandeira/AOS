@@ -1,9 +1,16 @@
-import session from "./session";
-import user from "./user";
-import message from "./message";
+const express = require("express");
+const router = express.Router();
 
-export default {
-  session,
-  user,
-  message,
-};
+const userRoutes = require("./user");
+const messageRoutes = require("./message");
+
+router.get("/", (req, res) => {
+  return res.json({
+    message: "API funcionando",
+  });
+});
+
+router.use("/users", userRoutes);
+router.use("/messages", messageRoutes);
+
+module.exports = router;

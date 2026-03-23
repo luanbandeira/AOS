@@ -4,14 +4,15 @@
   "description": "Projeto Express + PostgreSQL para estudo",
   "main": "api/index.js",
   "scripts": {
-    "start": "nodemon --exec babel-node api/index.js"
+    "start": "nodemon --exec babel-node api/index.js",
+    "dev": "nodemon --exec babel-node api/index.js"
   },
   "keywords": [
     "express",
     "postgresql",
     "sequelize"
   ],
-  "author": "Marcio Bueno",
+  "author": "Luan Bandeira",
   "license": "MIT",
   "type": "commonjs",
   "dependencies": {
@@ -21,9 +22,12 @@
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
-    "nodemon": "^3.1.12",
     "pg": "^8.20.0",
+    "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.8",
     "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
   }
 }
