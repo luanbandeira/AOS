@@ -1,33 +1,32 @@
-const { Sequelize, DataTypes } = require("sequelize");
+import Sequelize from "sequelize";
+
+import getUserModel from "./user";
+import getMessageModel from "./message";
 
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
   dialect: "postgres",
   protocol: "postgres",
-  logging: false,
   dialectOptions: {
+    // Necessary for SSL on NeonDB, Render.com and other providers
     ssl: {
       require: true,
       rejectUnauthorized: false,
     },
   },
+  dialectModule: require("pg"),
 });
 
-const db = {};
+const models = {
+  User: getUserModel(sequelize, Sequelize),
+  Message: getMessageModel(sequelize, Sequelize),
+};
 
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
-
-db.User = require("./user")(sequelize, DataTypes);
-db.Message = require("./message")(sequelize, DataTypes);
-
-db.User.hasMany(db.Message, {
-  foreignKey: "userId",
-  as: "messages",
+Object.keys(models).forEach((key) => {
+  if ("associate" in models[key]) {
+    models[key].associate(models);
+  }
 });
 
-db.Message.belongsTo(db.User, {
-  foreignKey: "userId",
-  as: "user",
-});
+export { sequelize };
 
-module.exports = db;
+export default models;
