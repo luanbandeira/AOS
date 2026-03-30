@@ -2,14 +2,22 @@ import { Router } from "express";
 
 const router = Router();
 
-router.get("/", async (req, res) => {
-  const users = await req.context.models.User.findAll();
-  return res.send(users);
+router.get("/", async (req, res, next) => {
+  try {
+    const users = await req.context.models.User.findAll();
+    return res.send(users);
+  } catch (err) {
+    next(err);
+  }
 });
 
-router.get("/:userId", async (req, res) => {
-  const user = await req.context.models.User.findByPk(req.params.userId);
-  return res.send(user);
+router.get("/:userId", async (req, res, next) => {
+  try {
+    const user = await req.context.models.User.findByPk(req.params.userId);
+    return res.send(user);
+  } catch (err) {
+    next(err);
+  }
 });
 
 router.post("/", (req, res) => {

@@ -4,6 +4,7 @@ import express from "express";
 
 import models, { sequelize } from "./models";
 import routes from "./routes";
+import errorHandler from "./middlewares/errorHandler"; // <- NOVO
 
 const app = express();
 app.set("trust proxy", true);
@@ -31,6 +32,8 @@ app.get("/", (req, res) => {
     "Received a GET HTTP method\nServidor rodando!\n" + process.env.MESSAGE,
   );
 });
+
+app.use(errorHandler); // <- NOVO — deve ficar depois de todas as rotas
 
 const port = process.env.PORT ?? 3000;
 const eraseDatabaseOnSync = process.env.ERASE_DATABASE_ON_SYNC === "true";
