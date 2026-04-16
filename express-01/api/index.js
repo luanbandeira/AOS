@@ -4,7 +4,7 @@ import express from "express";
 
 import models, { sequelize } from "./models";
 import routes from "./routes";
-import errorHandler from "./middlewares/errorHandler"; // <- NOVO
+import errorHandler from "./middlewares/errorHandler";
 
 const app = express();
 app.set("trust proxy", true);
@@ -27,6 +27,7 @@ app.use("/session", routes.session);
 app.use("/users", routes.user);
 app.use("/messages", routes.message);
 app.use("/tarefas", routes.tarefa);
+app.use("/auth", routes.auth);
 
 app.get("/", (req, res) => {
   res.send(
@@ -34,7 +35,7 @@ app.get("/", (req, res) => {
   );
 });
 
-app.use(errorHandler); // <- NOVO — deve ficar depois de todas as rotas
+app.use(errorHandler);
 
 const port = process.env.PORT ?? 3000;
 const eraseDatabaseOnSync = process.env.ERASE_DATABASE_ON_SYNC === "true";
@@ -56,6 +57,7 @@ const createUsersWithMessages = async () => {
     {
       username: "rwieruch",
       email: "rwieruch@email.com",
+      password: "123456",
       messages: [
         {
           text: "Published the Road to learn React",
@@ -71,6 +73,7 @@ const createUsersWithMessages = async () => {
     {
       username: "ddavids",
       email: "ddavids@email.com",
+      password: "123456",
       messages: [
         {
           text: "Happy to release ...",
